@@ -3,16 +3,33 @@ package Graph;
 import jade.core.Agent;
 
 public class Edge {
-	Agent in, out;
-	double weight;
+	String from, to;
+	float weight;
 	
-	public Edge(Agent i, Agent o, double w){
-		in = i;
-		out = o;
+	public Edge(String i, String o, float w){
+		from = i;
+		to = o;
 		weight = w;
 	}
 	
-	public void changeWeight(double w) {
+	public String getFrom(){
+		return from;
+	}
+	
+	public String getTo(){
+		return to;
+	}
+	
+	public void changeWeight(float w) {
 		weight = w;
+	}
+	
+	public float getWeight() {
+		return weight;
+	}
+	
+	
+	public boolean isTarget(String s){
+		return to.equals(s);
 	}
 }

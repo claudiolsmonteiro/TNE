@@ -15,18 +15,27 @@ public class main {
 		Profile p1 = new ProfileImpl();
 		ContainerController mainContainer = rt.createMainContainer(p1);
 		
-		AgentController ac1;
+		AgentController trueAgents;
 		try {
-			for(int i = 0; i< 50; i++) {
-				ac1 = mainContainer.acceptNewAgent("True"+i, new TrueAgent());
-				System.out.println("True"+1);
-				ac1.start();
+			for(int i = 0; i< 250; i++) {
+				trueAgents = mainContainer.acceptNewAgent("True"+i, new TrueAgent());
+				System.out.println("True"+i);
+				trueAgents.start();
 			}
-
 		}
 		catch( StaleProxyException e) {
 			e.printStackTrace();
 		}
-	mainContainer.getAgent("True1").;
+		
+		
+		AgentController reputation;
+		try {
+			reputation = mainContainer.acceptNewAgent("Reputation", new ReputationAgent());
+			reputation.start();
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
