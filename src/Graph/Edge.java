@@ -4,9 +4,9 @@ import jade.core.Agent;
 
 public class Edge {
 	String from, to;
-	float weight;
+	double weight;
 	
-	public Edge(String i, String o, float w){
+	public Edge(String i, String o, double w){
 		from = i;
 		to = o;
 		weight = w;
@@ -24,7 +24,7 @@ public class Edge {
 		weight = w;
 	}
 	
-	public float getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 	

@@ -1,5 +1,8 @@
 package Agents;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Vector;
 
@@ -35,10 +38,10 @@ public class TrueAgent extends Agent {
 			String message = "";
 			Random rand = new Random();
 			
-			for(int i = 0; i < 250; i++){
+			for(int i = 0; i < 5; i++){
 				Integer r = rand.nextInt(5); //have 1/5 th probability of not having a rating
 				if(r>0){
-					Float f = rand.nextFloat();
+					double f = rand.nextDouble();
 					message = message + f + "|";
 				}
 				else{

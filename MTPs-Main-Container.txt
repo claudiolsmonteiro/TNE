@@ -1,1 +1,1 @@
-http://DESKTOP-QVVMERT:7778/acc
+http://CALISTO:7778/acc

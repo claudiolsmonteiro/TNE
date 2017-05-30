@@ -31,7 +31,7 @@ public class ReputationAgent extends Agent {
 		protected Vector prepareCfps(ACLMessage cfp) {
 			Vector v = new Vector();
 			
-			for(int i = 0; i < 250; i++) {
+			for(int i = 0; i < 5; i++) {
 					cfp.addReceiver(new AID("True"+i, false));
 					g.AddNode("True"+i);
 			}
@@ -61,18 +61,21 @@ public class ReputationAgent extends Agent {
 					String weight = st.nextToken();
 					
 					if(!weight.equals("-") && !from.equals(to)){
-						g.AddEdge(from, to, Float.parseFloat(weight));
+						g.AddEdge(from, to, Double.parseDouble(weight));
 					}
 					t++;
 				}
 			}
+			g.SetTransitionMatrix(0.15);
 			g.print();
+			
 			System.out.println("Average Score of True3: "+g.AverageScore("True3"));
-			System.out.println("PageRank Score of True3: "+g.PageRank((float)0.10, "True3"));
+			System.out.println("PageRank Score of True3: "+g.PageRank("True3"));
 			System.out.println("Average Score of True5: "+g.AverageScore("True5"));
-			System.out.println("PageRank Score of True5: "+g.PageRank((float)0.10, "True5"));
+			System.out.println("PageRank Score of True5: "+g.PageRank("True5"));
 			System.out.println("Average Score of True6: "+g.AverageScore("True6"));
-			System.out.println("PageRank Score of True6: "+g.PageRank((float)0.10, "True6"));
+			System.out.println("PageRank Score of True6: "+g.PageRank("True6"));
+			
 		}
 		
 		protected void handleAllResultNotifications(Vector resultNotifications) {
