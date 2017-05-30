@@ -17,7 +17,7 @@ public class main {
 		
 		AgentController trueAgents;
 		try {
-			for(int i = 0; i< 5; i++) {
+			for(int i = 0; i< 50; i++) {
 				trueAgents = mainContainer.acceptNewAgent("True"+i, new TrueAgent());
 				System.out.println("True"+i);
 				trueAgents.start();

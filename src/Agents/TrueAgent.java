@@ -38,7 +38,7 @@ public class TrueAgent extends Agent {
 			String message = "";
 			Random rand = new Random();
 			
-			for(int i = 0; i < 5; i++){
+			for(int i = 0; i < 50; i++){
 				Integer r = rand.nextInt(5); //have 1/5 th probability of not having a rating
 				if(r>0){
 					double f = rand.nextDouble();

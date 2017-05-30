@@ -31,7 +31,7 @@ public class ReputationAgent extends Agent {
 		protected Vector prepareCfps(ACLMessage cfp) {
 			Vector v = new Vector();
 			
-			for(int i = 0; i < 5; i++) {
+			for(int i = 0; i < 50; i++) {
 					cfp.addReceiver(new AID("True"+i, false));
 					g.AddNode("True"+i);
 			}
@@ -71,10 +71,15 @@ public class ReputationAgent extends Agent {
 			
 			System.out.println("Average Score of True3: "+g.AverageScore("True3"));
 			System.out.println("PageRank Score of True3: "+g.PageRank("True3"));
+			System.out.println("-----------------------------------------------------");
+			System.out.println("Average Score of True1: "+g.AverageScore("True1"));
+			System.out.println("PageRank Score of True1: "+g.PageRank("True1"));
+			System.out.println("-----------------------------------------------------");
 			System.out.println("Average Score of True5: "+g.AverageScore("True5"));
 			System.out.println("PageRank Score of True5: "+g.PageRank("True5"));
-			System.out.println("Average Score of True6: "+g.AverageScore("True6"));
-			System.out.println("PageRank Score of True6: "+g.PageRank("True6"));
+			System.out.println("-----------------------------------------------------");
+			System.out.println("Average Score of True7: "+g.AverageScore("True7"));
+			System.out.println("PageRank Score of True7: "+g.PageRank("True7"));
 			
 		}
 		

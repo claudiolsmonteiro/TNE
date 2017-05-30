@@ -41,7 +41,27 @@ public class Graph {
 	
 	public double PageRank(String target){
 		
-		return getSteadyState(target, "void");
+		double[] fq = new double[nodes.size()];
+		
+		double value =(double) 1/nodes.size();
+		
+		for(int i = 0; i < fq.length; i++){
+			 fq[i] = value;
+		}
+		
+		double[] result = getSteadyState(fq, transitionMatrix);
+		
+		for(int i = 0; i < fq.length; i++){
+			 fq[i] = value;
+		}
+		
+		int index = -1;
+		for(int i = 0; i < nodes.size(); i++){
+			 if(nodes.get(i).getName().equals(target))
+				 index = i;
+		}
+		
+		return result[index];
 	}
 	
 	
@@ -107,13 +127,13 @@ public class Graph {
 			
 			for(int col = 0; col < size; col++){
 				
-				double w = node.getEdgeWeight("True"+col);
-				double den = node.getOutEdges().size();
+				//double w = node.getEdgeWeight("True"+col);
+				//double den = node.getOutEdges().size();
 				
-				if(w > 0)
-					transitionMatrix[col][row] = multiplier * w/den;
-				else
-					transitionMatrix[col][row] = alpha * 1/size;
+				double w = getRandomWalkProbability(node.getName(), "True"+col, alpha);
+				
+					transitionMatrix[row][col] = w;
+					
 			}
 		}
 	}
@@ -121,40 +141,29 @@ public class Graph {
 	public double[] multiplyMatrixes(double[] fq, double[][] m){
 		
 		double[] result = new double[fq.length];
+		
 		for(int row = 0; row < fq.length; row++){
+			
 			double value = 0;
+			
 			for(int col = 0; col < fq.length; col++){
 				value += (double)fq[col]*m[col][row];
 			}
 			result[row] = value;
 		}
+		
 		return result;
 	}
 
 	public double[] getSteadyState(double[] fq, double[][] m){
 		
-		System.out.println("------------Steady State Second--------");
 		
 		double[] steady1 = fq;
 		double[] steady2 = multiplyMatrixes(fq, m);
 		
-		System.out.println("------------Inicio--------");
-		for(int i = 0; i< steady1.length; i++){
-			System.out.println("steady1: "+steady1[i]);
-			System.out.println("steady2: "+steady2[i]);
-		}
-		System.out.println("--------------------------");
 		
 		while(!Arrays.equals(steady1, steady2)){
 			
-			
-			System.out.println("------------Next--------");
-			for(int i = 0; i< steady1.length; i++){
-				System.out.println("steady1: "+steady1[i]);
-				System.out.println("steady2: "+steady2[i]);
-				System.out.println("Igua: "+ Arrays.equals(steady1, steady2));
-			}
-			System.out.println("--------------------------");
 			
 			steady1 = steady2;
 			steady2 = multiplyMatrixes(steady1, m);
@@ -195,7 +204,7 @@ public class Graph {
 		return getSteadyState(fq, transitionMatrix)[indexTarget];
 	}
 	
-	private double getRandomWalkProbability(String current, String next){
+	private double getRandomWalkProbability(String current, String next, double alpha){
 		
 		int index = -1;
 		for(int i = 0; i < edges.size(); i++){
@@ -205,6 +214,9 @@ public class Graph {
 			
 		}
 		
+		double multiplier = (double)1-alpha;
+		double result = (double)alpha/nodes.size();
+		
 		if(index > -1){
 			double w = edges.get(index).getWeight();
 			double sum = 0;
@@ -213,8 +225,9 @@ public class Graph {
 					sum += edges.get(i).getWeight();
 				}
 			}
-			return w/sum;
+			double value = multiplier * w/sum;
+			result += value;
 		}
-		return 0;
+		return result;
 	}
 }
