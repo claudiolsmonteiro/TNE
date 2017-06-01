@@ -44,7 +44,7 @@ public class Graph {
 		}
 	}
 	
-	 static double[][] IntermediateStep(double[][] m1){
+	static double[][] IntermediateStep(double[][] m1){
 	        double[][] ret = new double[m1.length][m1.length];
 	       
 	       
@@ -56,7 +56,7 @@ public class Graph {
 	        return ret;
 	    }
 	 
-	    static double[][] FundamentalMatrix(double[][] m1){
+	static double[][] FundamentalMatrix(double[][] m1){
 	       
 	        double[][] ret = IntermediateStep(m1);
 	       
@@ -71,7 +71,7 @@ public class Graph {
 	        return ret;
 	    }
 	    
-	public int PageRank(String target){
+	public double[] PageRank(String target){
 		
 		double [][]m = FundamentalMatrix(transitionMatrix);
         Matrix inv = new Basic2DMatrix(m);
@@ -93,7 +93,8 @@ public class Graph {
 				rank++;
 		}
 
-		return rank;
+		double[] ret = {rank, pr[index]};
+		return ret;
 	}
 	
 	  static double[][] PPR (double[][] m1){
@@ -147,7 +148,7 @@ public class Graph {
 	    }
 	   
 	   
-	public int PersonalizedPageRank(String target, int agents){
+	public double[] PersonalizedPageRank(String target, int agents){
 		double [][]m = FundamentalMatrix(transitionMatrix);
         Matrix inv = new Basic2DMatrix(m);
         GaussJordanInverter v = new GaussJordanInverter(inv);
@@ -175,7 +176,8 @@ public class Graph {
 			if(average[i] > average[index]) 
 				rank++;
 		}
-		return rank;
+		double[] ret = {rank, average[index]};
+		return ret;
 	}
 	public int getIndex(String target) {
 		int index = -1;
@@ -185,7 +187,7 @@ public class Graph {
 		}
 		return index;
 	}
-	public int GlobalHittingTime(String target){
+	public double[] GlobalHittingTime(String target){
 		
 		double [][]m = FundamentalMatrix(transitionMatrix);
         Matrix inv = new Basic2DMatrix(m);
@@ -206,8 +208,8 @@ public class Graph {
 			if(ght[i]>ght[index])
 				rank++;
 		}
-
-		return rank;
+		double[] ret = {rank, ght[index]};
+		return ret;
 	}
 	
 	public double [] ght(double [][]N) {
@@ -223,7 +225,7 @@ public class Graph {
 		return ght;
 	}
 	
-	public int PersonalizedHittingTime(String target, int agents){
+	public double[] PersonalizedHittingTime(String target, int agents){
 		double [][]m = FundamentalMatrix(transitionMatrix);
         Matrix inv = new Basic2DMatrix(m);
         GaussJordanInverter v = new GaussJordanInverter(inv);
@@ -251,7 +253,9 @@ public class Graph {
 			if(average[i] > average[index]) 
 				rank++;
 		}
-		return rank;
+		
+		double[] ret = {rank, average[index]};
+		return ret;
 	}
 	
 	public double [][] pht(double [][]N) {
@@ -264,7 +268,7 @@ public class Graph {
 		return pht;
 	}
 	
-	public int AverageScore(String target){
+	public double[] AverageScore(String target){
 		double result[] = new double[nodes.size()];
 		int rank = 1;
 		int index = getIndex(target);
@@ -283,7 +287,8 @@ public class Graph {
 				rank++;
 			}
 		}
-		return rank;
+		double[] ret = {rank, result[index]};
+		return ret;
 	}
 	
 	public void print(){

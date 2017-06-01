@@ -19,10 +19,12 @@ public class main {
 		
 		AgentController trueAgents;
 		try {
-			trueAgents = mainContainer.acceptNewAgent("Agent0", new TrueAgent(PublicVariable.getNsybils()));
+			trueAgents = mainContainer.acceptNewAgent("Agent0", new TrueAgent(PublicVariable.getNsybils(),0));
 			trueAgents.start();
-			for(int i = 1; i< PublicVariable.getNagents(); i++) {
-				trueAgents = mainContainer.acceptNewAgent("Agent"+i, new TrueAgent(0));
+			trueAgents = mainContainer.acceptNewAgent("Agent1", new TrueAgent((int)Math.ceil((double)PublicVariable.getNsybils()*0.75),PublicVariable.getNsybils()));
+			trueAgents.start();
+			for(int i = 2; i< PublicVariable.getNagents(); i++) {
+				trueAgents = mainContainer.acceptNewAgent("Agent"+i, new TrueAgent(0,0));
 				trueAgents.start();
 			}
 		}

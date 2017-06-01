@@ -15,6 +15,8 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
+
+
 public class ReputationAgent extends Agent {
 	
 	public Graph g, gsybil;
@@ -43,7 +45,8 @@ public class ReputationAgent extends Agent {
 					g.AddNode("Agent"+i);
 					gsybil.AddNode("Agent"+i);
 			}
-			for(int i = PublicVariable.getNagents(); i < (PublicVariable.getNagents()+PublicVariable.getNsybils()); i++) {
+			int extraSybils = (int)Math.ceil((double)PublicVariable.getNsybils()*0.75);
+			for(int i = PublicVariable.getNagents(); i < (PublicVariable.getNagents()+PublicVariable.getNsybils()+extraSybils); i++) {
 				cfp.addReceiver(new AID("Sybil"+(i-PublicVariable.getNagents()), false));
 				gsybil.AddNode("Agent"+i);
 		}
@@ -71,9 +74,11 @@ public class ReputationAgent extends Agent {
 					
 					if(!weight.equals("-") && !from.equals(to)){
 						if(from.contains("Sybil")) {
+							
 							String[] parts = from.split("l");
 							String part2 = parts[1]; 
-							from = "Agent"+(Integer.parseInt(part2)+PublicVariable.getNagents());
+							from = "Agent"+(Integer.parseInt(part2)+PublicVariable.getNagents()); //Agent NAgents+SybilIndex
+							
 							gsybil.AddEdge(from, to, Double.parseDouble(weight));
 							gsybil.AddEdge(to, from, Double.parseDouble(weight));
 						}
@@ -95,38 +100,88 @@ public class ReputationAgent extends Agent {
 			gsybil.SetTransitionMatrix();
 			gsybil.print();
 
+			
 			System.out.println("-------------Without Sybils---------------------");
-			System.out.println("PageRank of True0: "+g.PageRank("Agent0"));
-			System.out.println("Personalized PageRank of True0: "+g.PersonalizedPageRank("Agent0",PublicVariable.getNagents()));
-			System.out.println("Global Hitting time Rank of True0: "+g.GlobalHittingTime("Agent0"));
-			System.out.println("Personalized Hitting Time Rank of True0: "+g.PersonalizedHittingTime("Agent0",PublicVariable.getNagents()));
-			System.out.println("Average Score Rank of True0: "+g.AverageScore("Agent0"));
+			System.out.println("PageRank of True0: " + g.PageRank("Agent0")[0] + "                      | " + g.PageRank("Agent0")[1]);
+			System.out.println("PageRank of True1: " + g.PageRank("Agent1")[0] + "                      | " + g.PageRank("Agent1")[1]);
+
+			System.out.println("Personalized PageRank of True0: "+g.PersonalizedPageRank("Agent0",PublicVariable.getNagents())[0] + "          | " + g.PersonalizedPageRank("Agent0",PublicVariable.getNagents())[1]);
+			System.out.println("Personalized PageRank of True1: "+g.PersonalizedPageRank("Agent1",PublicVariable.getNagents())[0] + "          | " + g.PersonalizedPageRank("Agent1",PublicVariable.getNagents())[1]);
+
+			System.out.println("Global Hitting time Rank of True0: "+g.GlobalHittingTime("Agent0")[0] + "      | " + g.GlobalHittingTime("Agent0")[1]);
+			System.out.println("Global Hitting time Rank of True1: "+g.GlobalHittingTime("Agent1")[0] + "      | " + g.GlobalHittingTime("Agent1")[1]);
+
+			System.out.println("Personalized Hitting Time Rank of True0: "+g.PersonalizedHittingTime("Agent0",PublicVariable.getNagents())[0] + " | " + g.PersonalizedHittingTime("Agent0",PublicVariable.getNagents())[1]);
+			System.out.println("Personalized Hitting Time Rank of True1: "+g.PersonalizedHittingTime("Agent1",PublicVariable.getNagents())[0] + " | " + g.PersonalizedHittingTime("Agent1",PublicVariable.getNagents())[1]);
+
+			System.out.println("Average Score Rank of True0: "+g.AverageScore("Agent0")[0] + "            | " + g.AverageScore("Agent0")[1]);
+			System.out.println("Average Score Rank of True1: "+g.AverageScore("Agent1")[0] + "            | " + g.AverageScore("Agent1")[1]);
+
+			
 			System.out.println("----------------With Sybils----------------------");
-			System.out.println("PageRank of True0: "+gsybil.PageRank("Agent0"));
-			System.out.println("Personalized PageRank of True0: "+gsybil.PersonalizedPageRank("Agent0",PublicVariable.getNagents()));
-			System.out.println("Global Hitting time Rank of True0: "+gsybil.GlobalHittingTime("Agent0"));
-			System.out.println("Personalized Hitting Time Rank of True0: "+gsybil.PersonalizedHittingTime("Agent0",PublicVariable.getNagents()));
-			System.out.println("Average Score Rank of True0: "+gsybil.AverageScore("Agent0"));
+			System.out.println("PageRank of True0: "+gsybil.PageRank("Agent0")[0] + "                        | " + gsybil.PageRank("Agent0")[1]);
+			System.out.println("PageRank of True1: "+gsybil.PageRank("Agent1")[0] + "                        | " + gsybil.PageRank("Agent1")[1]);
+
+			System.out.println("Personalized PageRank of True0: "+gsybil.PersonalizedPageRank("Agent0",PublicVariable.getNagents())[0] + "           | " + gsybil.PersonalizedPageRank("Agent0",PublicVariable.getNagents())[1]);
+			System.out.println("Personalized PageRank of True1: "+gsybil.PersonalizedPageRank("Agent1",PublicVariable.getNagents())[0] + "           | " + gsybil.PersonalizedPageRank("Agent1",PublicVariable.getNagents())[1]);
+
+			System.out.println("Global Hitting time Rank of True0: "+gsybil.GlobalHittingTime("Agent0")[0] + "        | " + gsybil.GlobalHittingTime("Agent0")[1]);
+			System.out.println("Global Hitting time Rank of True1: "+gsybil.GlobalHittingTime("Agent1")[0] + "        | " + gsybil.GlobalHittingTime("Agent1")[1]);
+
+			System.out.println("Personalized Hitting Time Rank of True0: "+gsybil.PersonalizedHittingTime("Agent0",PublicVariable.getNagents())[0] + " | " + gsybil.PersonalizedHittingTime("Agent0",PublicVariable.getNagents())[1]);
+			System.out.println("Personalized Hitting Time Rank of True1: "+gsybil.PersonalizedHittingTime("Agent1",PublicVariable.getNagents())[0] + " | " + gsybil.PersonalizedHittingTime("Agent1",PublicVariable.getNagents())[1]);
+
+			System.out.println("Average Score Rank of True0: "+gsybil.AverageScore("Agent0")[0] + "             | " + gsybil.AverageScore("Agent0")[1]);
+			System.out.println("Average Score Rank of True1: "+gsybil.AverageScore("Agent1")[0] + "             | " + gsybil.AverageScore("Agent1")[1]);
+
+			
+			
 			gsybil.cutOutlinks("Agent0",PublicVariable.getNagents());
 			g.cutOutlinks("Agent0",PublicVariable.getNagents());
+			gsybil.cutOutlinks("Agent1",PublicVariable.getNagents());
+			g.cutOutlinks("Agent1",PublicVariable.getNagents());
 			g.SetTransitionMatrix();
 			gsybil.SetTransitionMatrix();
+			
 			System.out.println("--------------Cutting Outlinks------------------------");
-			System.out.println("PageRank of True0: "+g.PageRank("Agent0"));
-			System.out.println("Personalized PageRank of True0: "+g.PersonalizedPageRank("Agent0",PublicVariable.getNagents()));
-			System.out.println("Global Hitting time Rank of True0: "+g.GlobalHittingTime("Agent0"));
-			System.out.println("Personalized Hitting Time Rank of True0: "+g.PersonalizedHittingTime("Agent0",PublicVariable.getNagents()));
+			System.out.println("PageRank of True0: "+g.PageRank("Agent0")[0] + "                      | " + g.PageRank("Agent0")[1]);
+			System.out.println("PageRank of True1: "+g.PageRank("Agent1")[0] + "                      | " + g.PageRank("Agent1")[1]);
+
+			System.out.println("Personalized PageRank of True0: "+g.PersonalizedPageRank("Agent0",PublicVariable.getNagents())[0] + "         | " + g.PersonalizedPageRank("Agent0",PublicVariable.getNagents())[1]);
+			System.out.println("Personalized PageRank of True1: "+g.PersonalizedPageRank("Agent1",PublicVariable.getNagents())[0] + "         | " + g.PersonalizedPageRank("Agent1",PublicVariable.getNagents())[1]);
+
+			System.out.println("Global Hitting time Rank of True0: "+g.GlobalHittingTime("Agent0")[0] + "       | " + g.GlobalHittingTime("Agent0")[1]);
+			System.out.println("Global Hitting time Rank of True1: "+g.GlobalHittingTime("Agent1")[0] + "       | " + g.GlobalHittingTime("Agent1")[1]);
+
+			System.out.println("Personalized Hitting Time Rank of True0: "+g.PersonalizedHittingTime("Agent0",PublicVariable.getNagents())[0] + " | " + g.PersonalizedHittingTime("Agent0",PublicVariable.getNagents())[1]);
+			System.out.println("Personalized Hitting Time Rank of True1: "+g.PersonalizedHittingTime("Agent1",PublicVariable.getNagents())[0] + " | " + g.PersonalizedHittingTime("Agent1",PublicVariable.getNagents())[1]);
+
 			g.reportZero("Agent0");
+			g.reportZero("Agent1");
 			g.SetTransitionMatrix();
-			System.out.println("Average Score Rank of True0: "+g.AverageScore("Agent0"));
+			System.out.println("Average Score Rank of True0: "+g.AverageScore("Agent0")[0] + "             | " + g.AverageScore("Agent0")[1]);
+			System.out.println("Average Score Rank of True1: "+g.AverageScore("Agent1")[0] + "             | " + g.AverageScore("Agent1")[1]);
+
+			
 			System.out.println("----------------Cutting Outlinks w/Sybils----------------------");
-			System.out.println("PageRank of True0: "+gsybil.PageRank("Agent0"));
-			System.out.println("Personalized PageRank of True0: "+gsybil.PersonalizedPageRank("Agent0",PublicVariable.getNagents()));
-			System.out.println("Global Hitting time Rank of True0: "+gsybil.GlobalHittingTime("Agent0"));
-			System.out.println("Personalized Hitting Time Rank of True0: "+gsybil.PersonalizedHittingTime("Agent0",PublicVariable.getNagents()));
+			System.out.println("PageRank of True0: "+gsybil.PageRank("Agent0")[0] + "                        | " + gsybil.PageRank("Agent0")[1]);
+			System.out.println("PageRank of True1: "+gsybil.PageRank("Agent1")[0] + "                        | " + gsybil.PageRank("Agent1")[1]);
+
+			System.out.println("Personalized PageRank of True0: "+gsybil.PersonalizedPageRank("Agent0",PublicVariable.getNagents())[0] + "           | " + gsybil.PersonalizedPageRank("Agent0",PublicVariable.getNagents())[1]);
+			System.out.println("Personalized PageRank of True1: "+gsybil.PersonalizedPageRank("Agent1",PublicVariable.getNagents())[0] + "           | " + gsybil.PersonalizedPageRank("Agent1",PublicVariable.getNagents())[1]);
+
+			System.out.println("Global Hitting time Rank of True0: "+gsybil.GlobalHittingTime("Agent0")[0] + "        | " + gsybil.GlobalHittingTime("Agent0")[1]);
+			System.out.println("Global Hitting time Rank of True1: "+gsybil.GlobalHittingTime("Agent1")[0] + "        | " + gsybil.GlobalHittingTime("Agent1")[1]);
+
+			System.out.println("Personalized Hitting Time Rank of True0: "+gsybil.PersonalizedHittingTime("Agent0",PublicVariable.getNagents())[0] + " | " + gsybil.PersonalizedHittingTime("Agent0",PublicVariable.getNagents())[1]);
+			System.out.println("Personalized Hitting Time Rank of True1: "+gsybil.PersonalizedHittingTime("Agent1",PublicVariable.getNagents())[0] + " | " + gsybil.PersonalizedHittingTime("Agent1",PublicVariable.getNagents())[1]);
+
 			gsybil.reportZero("Agent0");
+			gsybil.reportZero("Agent1");
 			gsybil.SetTransitionMatrix();
-			System.out.println("Average Score with sybils of True0 with report 0: "+gsybil.AverageScore("Agent0"));
+			System.out.println("Average Score Rank of True0: "+gsybil.AverageScore("Agent0")[0] + "              | " + gsybil.AverageScore("Agent0")[1]);
+			System.out.println("Average Score Rank of True1: "+gsybil.AverageScore("Agent1")[0] + "              | " + gsybil.AverageScore("Agent1")[1]);
+
 		}
 		
 		protected void handleAllResultNotifications(Vector resultNotifications) {

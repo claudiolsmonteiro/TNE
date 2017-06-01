@@ -18,24 +18,27 @@ import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
 public class TrueAgent extends Agent {
-	int s;
+	int mySybils, sybilIndex;
 	public void setup() {
-		addSybils(s);
+		addSybils(mySybils);
 		addBehaviour(new FIPAContractNetResp(this, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
 	}
 	
-	public TrueAgent (int s) {
+	public TrueAgent (int mySybils, int sybilIndex) {
 		super();
-		this.s = s;
+		this.mySybils = mySybils;
+		this.sybilIndex = sybilIndex;
 
 	}
 	
 	public void addSybils(int s) {
 		// TODO Auto-generated method stub
 		ContainerController cc = this.getContainerController();
-		for(int i = 0; i < s; i++) {
+		for(int i = sybilIndex; i < sybilIndex+mySybils; i++) {
 			AgentController ac;
 			try {
+				System.out.println("Agent: "+this.getLocalName());
+				System.out.println("sybil index:"+i);
 				ac = cc.acceptNewAgent("Sybil"+i, new SybilAgent(this.getLocalName()));	
 				ac.start();
 			} catch (StaleProxyException e) {

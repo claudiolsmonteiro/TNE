@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/claudiomonteiro/Desktop/Github/TNE/jade.jar"/>
-	<classpathentry kind="lib" path="/Users/claudiomonteiro/Desktop/Github/TNE/la4j-0.6.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Hugo/workspace/JadeTest/jade.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Hugo/workspace/Test/la4j-0.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

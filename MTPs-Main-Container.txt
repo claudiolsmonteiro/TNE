@@ -1,1 +1,1 @@
-http://localhost:50599/acc
+http://CALISTO:7778/acc
