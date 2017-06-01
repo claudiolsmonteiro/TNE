@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Vector;
 
+import PublicVar.PublicVariable;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -54,7 +55,7 @@ public class TrueAgent extends Agent {
 		protected ACLMessage handleCfp(ACLMessage cfp) {
 			ACLMessage reply = cfp.createReply();
 			reply.setPerformative(ACLMessage.PROPOSE);
-			String resp = ResponseContent(100);
+			String resp = ResponseContent(PublicVariable.getNagents());
 			reply.setContent(resp);
 
 			//this.myAgent.addBehaviour(new FIPAContractNetResp(this.myAgent, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
@@ -66,7 +67,7 @@ public class TrueAgent extends Agent {
 			Random rand = new Random();
 			
 			for(int i = 0; i < n; i++){
-				Integer r = rand.nextInt(4); //have 1/4 th probability of not having a rating
+				Integer r = rand.nextInt(10); //have 1/10 th probability of not having a rating
 				if(r>0){
 					double f = rand.nextDouble();
 					message = message + f + "|";

@@ -1,1 +1,1 @@
-http://wifi-interno.fe.up.pt:7778/acc
+http://localhost:50599/acc

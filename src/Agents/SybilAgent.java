@@ -7,6 +7,7 @@ import java.util.Vector;
 import Agents.ReputationAgent.FIPAContractNetInit;
 import Agents.TrueAgent.FIPAContractNetResp;
 import Graph.Graph;
+import PublicVar.PublicVariable;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -35,7 +36,7 @@ public class SybilAgent extends Agent {
 		protected ACLMessage handleCfp(ACLMessage cfp) {
 			ACLMessage reply = cfp.createReply();
 			reply.setPerformative(ACLMessage.PROPOSE);
-			String resp = ResponseContent(100);
+			String resp = ResponseContent(PublicVariable.getNagents());
 			reply.setContent(resp);
 
 			//this.myAgent.addBehaviour(new FIPAContractNetResp(this.myAgent, MessageTemplate.MatchPerformative(ACLMessage.CFP)));

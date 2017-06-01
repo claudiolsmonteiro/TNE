@@ -9,6 +9,10 @@ import java.util.Random;
 
 import javax.print.DocFlavor.STRING;
 
+import org.la4j.Matrix;
+import org.la4j.inversion.GaussJordanInverter;
+import org.la4j.matrix.dense.Basic2DMatrix;
+
 import jade.core.Agent;
 
 public class Graph {
@@ -16,6 +20,7 @@ public class Graph {
 	List<Node> nodes;
 	List<Edge> edges;
 	double[][] transitionMatrix; 
+	static double alpha;
 	
 	
 	public Graph() {
@@ -39,62 +44,135 @@ public class Graph {
 		}
 	}
 	
+	 static double[][] IntermediateStep(double[][] m1){
+	        double[][] ret = new double[m1.length][m1.length];
+	       
+	       
+	        for(int i = 0; i < m1.length; i++){
+	            for(int j = 0; j < m1.length; j++){
+	                ret[i][j] = ((1-alpha) * m1[i][j]);
+	            }
+	        }
+	        return ret;
+	    }
+	 
+	    static double[][] FundamentalMatrix(double[][] m1){
+	       
+	        double[][] ret = IntermediateStep(m1);
+	       
+	        for(int i = 0; i < m1.length; i++){
+	            for(int j = 0; j < m1.length; j++){
+	                if(i == j)
+	                    ret[i][j] = 1 - ret[i][j];
+	                else
+	                    ret[i][j] = 0 - ret[i][j];
+	            }
+	        }
+	        return ret;
+	    }
+	    
 	public int PageRank(String target){
 		
-		double[] fq = new double[nodes.size()];
+		double [][]m = FundamentalMatrix(transitionMatrix);
+        Matrix inv = new Basic2DMatrix(m);
+        GaussJordanInverter v = new GaussJordanInverter(inv);
+        Matrix result = v.inverse();
+       
+        double[][] N = new double[m.length][m.length];
+        for(int i = 0; i< m.length; i++){
+            for(int j = 0; j< m.length; j++){
+                N[i][j] = result.get(i, j);
+            }
+        }
 		
-		double value =(double) 1/nodes.size();
-		
-		for(int i = 0; i < fq.length; i++){
-			 fq[i] = value;
-		}
-
-		
-		double[] result = getSteadyState(fq, transitionMatrix);
-		
-		
+        double [] pr = PR(N);
 		int index = getIndex(target) ;
 		int rank = 1;
-		for(int i = 0; i < result.length; i++) {
-			if(result[i]>result[index])
+		for(int i = 0; i < pr.length; i++) {
+			if(pr[i]>pr[index])
 				rank++;
 		}
 
 		return rank;
 	}
 	
-	
+	  static double[][] PPR (double[][] m1){
+	       
+	        double[] h = new double[m1.length];
+	        double[][] ppr = new double[m1.length][m1.length];
+	       
+	        for(int i = 0; i < ppr.length; i++){
+	            h[i] = 0;
+	            for(int j = 0; j < ppr.length; j++){
+	                h[i] += m1[i][j];
+	               
+	            }
+	            for(int j = 0; j < ppr.length; j++){
+	               
+	                if(i != j){
+	                    ppr[i][j] = (double)m1[i][j]/h[i];
+	                }
+	               
+	            }
+	        }
+	        return ppr;
+	    }
+	   
+	    static double[] PR (double[][] m1){
+	       
+	        double[] h = new double[m1.length];
+	        double[] pr = new double[m1.length];
+	       
+	        for(int i = 0; i < pr.length; i++){
+	            h[i] = 0;
+	            pr[i] = 0;
+	            for(int j = 0; j < pr.length; j++){
+	                h[i] = h[i] + m1[i][j];
+	            }
+	        }
+	       
+	        for(int j = 0; j < pr.length; j++){
+	           
+	            for(int i = 0; i < pr.length; i++){
+	               
+	                if(i != j){
+	                    pr[j] += (double)m1[i][j]/h[i];
+	                }
+	            }
+	           
+	            pr[j] = (double)1/(m1.length-1) * pr[j];
+	        }
+	       
+	        return pr;
+	    }
+	   
+	   
 	public int PersonalizedPageRank(String target, int agents){
-		double[] fq = new double[nodes.size()];
-		
-		double value[] = new double[nodes.size()];
-		for(int i = 0; i < value.length; i++)
-			value[i]=0.0;
-		
-		int index = getIndex(target);
-		
-		double[] result;
-		for(int j = 0; j < agents; j++) {
-			if(!target.equals("Agent"+j)) {
-				for(int i = 0; i < fq.length; i++){
-					if(i == j) {
-						 fq[i] = (double)1;
-					}
-					else {
-						fq[i]=(double)0;
-					}
-				}
-				result = getSteadyState(fq, transitionMatrix);
-				for(int i = 0; i < value.length; i++){
-					value[i] += result[i];
-				}
-					
+		double [][]m = FundamentalMatrix(transitionMatrix);
+        Matrix inv = new Basic2DMatrix(m);
+        GaussJordanInverter v = new GaussJordanInverter(inv);
+        Matrix result = v.inverse();
+        double[][] N = new double[m.length][m.length];
+        for(int i = 0; i< m.length; i++){
+            for(int j = 0; j< m.length; j++){
+                N[i][j] = result.get(i, j);
+            }
+        }
+
+        double [][] ppr = PPR(N);
+		double [] average = new double[agents];
+		for(int i = 0; i < agents; i++)
+			average[i] = 0;
+		int rank = 1, index = getIndex(target);
+		for(int i = 0; i < average.length; i++) {
+			
+			for(int j = 0; j < average.length; j++ ) {
+					average[i] += ppr[j][i];	
 			}
+			
 		}
-		
-		int rank = 1;
-		for(int i = 0; i < value.length; i++) {
-			if(value[i]>value[index])
+		for(int i = 0; i < average.length; i++) {
+			if(average[i] > average[index]) 
 				rank++;
 		}
 		return rank;
@@ -107,12 +185,85 @@ public class Graph {
 		}
 		return index;
 	}
-	public int GlobalHittingTime(){
-		return 0;
+	public int GlobalHittingTime(String target){
+		
+		double [][]m = FundamentalMatrix(transitionMatrix);
+        Matrix inv = new Basic2DMatrix(m);
+        GaussJordanInverter v = new GaussJordanInverter(inv);
+        Matrix result = v.inverse();
+       
+        double[][] N = new double[m.length][m.length];
+        for(int i = 0; i< m.length; i++){
+            for(int j = 0; j< m.length; j++){
+                N[i][j] = result.get(i, j);
+            }
+        }
+		
+        double [] ght = ght(N);
+		int index = getIndex(target) ;
+		int rank = 1;
+		for(int i = 0; i < ght.length; i++) {
+			if(ght[i]>ght[index])
+				rank++;
+		}
+
+		return rank;
 	}
-	public int PersonalizedHittingTime(){
-		return 0;
+	
+	public double [] ght(double [][]N) {
+		double []ght = new double[N.length];
+		
+		for(int j = 0; j < N.length; j++) {
+			for(int i = 0; i < N.length; i++) {
+				if ( i != j)
+					ght[j] = ght[j] + (N[i][j]/N[j][j]);
+			}
+			ght[j] = ght[j]/(N.length-1);
+		}
+		return ght;
 	}
+	
+	public int PersonalizedHittingTime(String target, int agents){
+		double [][]m = FundamentalMatrix(transitionMatrix);
+        Matrix inv = new Basic2DMatrix(m);
+        GaussJordanInverter v = new GaussJordanInverter(inv);
+        Matrix result = v.inverse();
+        double[][] N = new double[m.length][m.length];
+        for(int i = 0; i< m.length; i++){
+            for(int j = 0; j< m.length; j++){
+                N[i][j] = result.get(i, j);
+            }
+        }
+
+        double [][] pht = pht(N);
+		double [] average = new double[agents];
+		for(int i = 0; i < agents; i++)
+			average[i] = 0;
+		int rank = 1, index = getIndex(target);
+		for(int i = 0; i < average.length; i++) {
+			
+			for(int j = 0; j < average.length; j++ ) {
+					average[i] += pht[j][i];	
+			}
+			
+		}
+		for(int i = 0; i < average.length; i++) {
+			if(average[i] > average[index]) 
+				rank++;
+		}
+		return rank;
+	}
+	
+	public double [][] pht(double [][]N) {
+		double [][] pht = new double[N.length][N.length];
+		for(int i = 0; i< N.length; i++) {
+			for(int j = 0; j < N.length; j++)
+				if(i!=j)
+					pht[i][j] = N[i][j]/N[j][j];
+		}
+		return pht;
+	}
+	
 	public int AverageScore(String target){
 		double result[] = new double[nodes.size()];
 		int rank = 1;
@@ -140,12 +291,6 @@ public class Graph {
 		System.out.println("Number of nodes: "+nodes.size());
 		System.out.println("Number of edges: "+edges.size());
 		DecimalFormat df = new DecimalFormat("0.000");
-		/*for(int i = 0; i < edges.size(); i++){
-			System.out.println("from: " + edges.get(i).getFrom() + " | to: " + edges.get(i).getTo() + " | w: " + df.format(edges.get(i).getWeight()));
-		}*/
-		
-		//System.out.println("");
-		//System.out.println("-------TransitionMatrix-------");
 		
 		for(int row = 0; row < nodes.size(); row++){
 			System.out.print(row+": ");
@@ -161,11 +306,10 @@ public class Graph {
 	
 	
 	
-	public void SetTransitionMatrix(double alpha){
+	public void SetTransitionMatrix(){
 		int size = nodes.size();
 		transitionMatrix = new double[size][size];
 		
-		double multiplier = 1-alpha;
 		
 		for(int row = 0; row < size; row++){
 			
@@ -173,30 +317,12 @@ public class Graph {
 			
 			for(int col = 0; col < size; col++){
 				
-				//double w = node.getEdgeWeight("True"+col);
-				//double den = node.getOutEdges().size();
-				
-				double w = getRandomWalkProbability(node.getName(), "Agent"+col, alpha);
+				double w = getRandomWalkProbability(node.getName(), "Agent"+col);
 				transitionMatrix[row][col] = w;
 			}
 		}
 	}
 
-	public double[] multiplyMatrixes(double[] fq, double[][] m){
-		double[] result = new double[fq.length];
-		
-		for(int row = 0; row < fq.length; row++){
-			
-			double value = 0;
-			
-			for(int col = 0; col < fq.length; col++){
-				value += (double)fq[col]*m[col][row];
-			}
-			result[row] = value;
-		}
-		
-		return result;
-	}
 
 	public boolean compareArray(double [] a, double[] b) {
 		DecimalFormat df = new DecimalFormat("0.000000000000");
@@ -210,54 +336,10 @@ public class Graph {
 		return isequal;
 	}
 	
-	public double[] getSteadyState(double[] fq, double[][] m){
-		
-		
-		double[] steady1 = fq;
-		double[] steady2 = multiplyMatrixes(fq, m);
-		
-		
-		while(!compareArray(steady1, steady2)){
-			steady1 = steady2;
-			steady2 = multiplyMatrixes(steady1, m);
-		}
-		
-		return steady2;
-	}
 	
 	
-	public double getSteadyState(String target, String view){
-		
-		System.out.println("------------Steady State First--------");
-		
-		int indexTarget=-1;
-		int indexView=-1;
-		for(int i=0; i < nodes.size(); i++){
-			if(nodes.get(i).getName().equals(target))
-				indexTarget = i;
-			if(nodes.get(i).getName().equals(view))
-				indexView = i;
-		}
-		
-		double[] fq = new double[nodes.size()];
-		
-		
-		for(int i = 0; i < nodes.size(); i++){
-			
-			fq[i] = (double)1/nodes.size();
-			
-			if(indexView > 0){
-				if(i == indexView)
-					fq[i] = 1;
-				else
-					fq[i] = 0;
-			}
-		}
-		
-		return getSteadyState(fq, transitionMatrix)[indexTarget];
-	}
 	
-	private double getRandomWalkProbability(String current, String next, double alpha){
+	private double getRandomWalkProbability(String current, String next){
 		
 		int index = -1;
 		for(int i = 0; i < edges.size(); i++){
@@ -267,8 +349,7 @@ public class Graph {
 			
 		}
 		
-		double multiplier = (double)1-alpha;
-		double result = (double)alpha/nodes.size();
+		double result = 0;
 		
 		if(index > -1){
 			double w = edges.get(index).getWeight();
@@ -278,8 +359,7 @@ public class Graph {
 					sum += edges.get(i).getWeight();
 				}
 			}
-			double value = multiplier * w/sum;
-			result += value;
+			return (double)w/sum;
 		}
 		return result;
 	}
@@ -308,5 +388,11 @@ public class Graph {
 			if(!from.equals(to))
 				edges.add(new Edge(from,to,w));
 		}
+	}
+
+	public void setAlpha(double d) {
+		alpha = d;
+		// TODO Auto-generated method stub
+		
 	}
 }

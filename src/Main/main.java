@@ -1,6 +1,7 @@
 package Main;
 
 import Agents.*;
+import PublicVar.*;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -9,6 +10,7 @@ import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
 public class main {
+
 	public static void main(String [] args) {
 		Runtime rt = Runtime.instance();
 		
@@ -17,9 +19,9 @@ public class main {
 		
 		AgentController trueAgents;
 		try {
-			trueAgents = mainContainer.acceptNewAgent("Agent0", new TrueAgent(10));
+			trueAgents = mainContainer.acceptNewAgent("Agent0", new TrueAgent(PublicVariable.getNsybils()));
 			trueAgents.start();
-			for(int i = 1; i< 100; i++) {
+			for(int i = 1; i< PublicVariable.getNagents(); i++) {
 				trueAgents = mainContainer.acceptNewAgent("Agent"+i, new TrueAgent(0));
 				trueAgents.start();
 			}
